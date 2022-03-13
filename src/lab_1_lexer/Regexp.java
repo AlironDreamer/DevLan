@@ -1,9 +1,8 @@
 package lab_1_lexer;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,13 +12,14 @@ public class Regexp
     static
     {
         lexems.put("VAR", Pattern.compile("^[a-z][a-z0-9]{0,}$"));
+        lexems.put("STRING", Pattern.compile("\".*\""));
         lexems.put("DIGIT", Pattern.compile("^0|([1-9][0-9]*)$"));
         lexems.put("ASSIGN_OP", Pattern.compile("^=$"));
         lexems.put("OP", Pattern.compile("^\\+|-|/|%|\\*$"));
         lexems.put("1KW_IF", Pattern.compile("^(if)$"));
         lexems.put("2KW_ELSE", Pattern.compile("^(else)$"));
-        lexems.put("2KW_WHILE", Pattern.compile("^(while)$"));
-        lexems.put("3KW_FOR", Pattern.compile("^(for)$"));
+        lexems.put("3KW_WHILE", Pattern.compile("^(while)$"));
+        lexems.put("4KW_FOR", Pattern.compile("^(for)$"));
         lexems.put("SPACE", Pattern.compile("^( )$"));
         lexems.put("EXCLAMATION_MARK", Pattern.compile("^(!)$"));
         lexems.put("L_BRACKET", Pattern.compile("^\\($"));
@@ -45,7 +45,7 @@ public class Regexp
                 Matcher match2 = lexems.get(lexName).matcher(unitsP2);
                 if (match1.matches())
                 {
-                    if (!match2.matches()) {        //правило отката
+                    if (!match2.matches() || i == srcExample.length()-1) {        //правило отката
                         tokens.add(new Token(lexName, unitsP1));
                         unitsP1 = "";
                     }
@@ -65,7 +65,8 @@ public class Regexp
 
     public static void main(String[] args)
     {
-        String srcExample = "test123=+ifelsewhilefor !()<>{}";
+        Scanner scan = new Scanner(System.in);
+        String srcExample = "test=555+84 \"Привет\" ifelsewhilefor{}()";
         List<Token> tokens = new LinkedList<>();
         Regexp obj = new Regexp();
         obj.genTokens(srcExample, tokens);
